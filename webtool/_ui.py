@@ -27,9 +27,17 @@ def _tpl_head():
   for path in mpl_js:
     x = '<script src="_static/jquery/js/%s"></script>' % path
     resource_html.append(x)
-  resource_html.append('<script src="mpl.js"></script>')
-  return '<title>{{title}}</title>\n' + '\n'.join(resource_html)
+  return '\n'.join(resource_html) + _TPL_HEAD
 
+_TPL_HEAD = '''
+<title>{{title}}</title>
+<script src="mpl.js"></script>
+<style>
+fieldset { display:inline-block; }
+.figure { display:inline-block; }
+input[type="submit"] { width: 100%; }
+</style>
+'''
 
 _TPL_BODY = '''
 <h1>{{title}}</h1>
@@ -45,9 +53,9 @@ _TPL_BODY = '''
       <p><label>
       {% if argtype is open %}
         <input type="file" name="{{key}}">
-      {% elif isinstance(argtype, int) %}
+      {% elif issubclass(argtype, int) %}
         <input type="number" name="{{key}}" value="{{default}}">
-      {% elif isinstance(argtype, float) %}
+      {% elif issubclass(argtype, float) %}
         <input type="number" name="{{key}}" value="{{default}}" step="any">
       {% else %}
         <input type="text" name="{{key}}" value="{{default}}">
