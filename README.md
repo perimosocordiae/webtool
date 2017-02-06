@@ -1,4 +1,4 @@
-# webtool
+# WebTool
 Hassle-free web interface generator for Python code.
 
 ## Usage
