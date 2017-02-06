@@ -22,3 +22,11 @@ Matplotlib figures are supported as well.
 Create figures as normal in a `webfn`-decorated function,
 and they will appear as interactive WebAgg plots.
 
+## Installation
+
+WebTool isn't on PyPI yet, but you can install from GitHub:
+
+    pip install git+https://github.com/perimosocordiae/webtool.git
+
+Alternatively, clone this repo and run `setup.py install`.
+
