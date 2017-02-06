@@ -1,7 +1,9 @@
+import argparse
 import matplotlib
 import os
 import tornado.template
 
+__all__ = ['ui_template']
 _TPL = None
 
 
@@ -11,7 +13,24 @@ def ui_template():
     head = _tpl_head()
     tpl = '<html><head>%s</head><body>%s</body></html>' % (head, _TPL_BODY)
     _TPL = tornado.template.Template(tpl)
+    _TPL.namespace['arg_desc_to_input'] = arg_desc_to_input
   return _TPL
+
+
+def arg_desc_to_input(key, arg_desc):
+  '''Convert (desc, type, default) tuples into labeled <input> elements'''
+  desc, t, default = arg_desc
+  if issubclass(t, int):
+    attrs = 'type="number"'
+  elif issubclass(t, float):
+    attrs = 'type="number" step="any"'
+  elif t is open or isinstance(t, argparse.FileType):
+    attrs = 'type="file"'
+  else:
+    attrs = 'type="text"'
+  # NOTE: an f-string would be great here
+  tpl = '<label><input {attrs} name="{key}" value="{default}"> {desc}</label>'
+  return tpl.format(attrs=attrs, key=key, default=default, desc=desc)
 
 
 def _tpl_head():
@@ -28,6 +47,7 @@ def _tpl_head():
     x = '<script src="_static/jquery/js/%s"></script>' % path
     resource_html.append(x)
   return '\n'.join(resource_html) + _TPL_HEAD
+
 
 _TPL_HEAD = '''
 <title>{{title}}</title>
@@ -49,18 +69,7 @@ _TPL_BODY = '''
     <legend>{{ftitle}}</legend>
     <p>{{fdesc}}</p>
     {% for key in arg_descs %}
-      {% set desc, argtype, default = arg_descs[key] %}
-      <p><label>
-      {% if argtype is open %}
-        <input type="file" name="{{key}}">
-      {% elif issubclass(argtype, int) %}
-        <input type="number" name="{{key}}" value="{{default}}">
-      {% elif issubclass(argtype, float) %}
-        <input type="number" name="{{key}}" value="{{default}}" step="any">
-      {% else %}
-        <input type="text" name="{{key}}" value="{{default}}">
-      {% end %}
-      {{desc}}</label></p>
+      <p>{{arg_desc_to_input(key, arg_descs[key])}}</p>
     {% end %}
     <input type="hidden" name="session.uid" value="{{uid}}">
     <input type="submit" value="Run">

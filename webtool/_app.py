@@ -12,7 +12,7 @@ from ._ui import ui_template
 
 
 class WebToolApp(tornado.web.Application):
-  def __init__(self, title, funcs, **kwargs):
+  def __init__(self, title, funcs):
     routes = [
         (r'/', FrontendHandler, dict(title=title, funcs=funcs)),
         # (r'/assets/(.*)', tornado.web.StaticFileHandler, dict(path=...)),
@@ -27,7 +27,7 @@ class WebToolApp(tornado.web.Application):
       if not hasattr(f, '_webtool_args'):
         raise ValueError('Function %s must be decorated with @webtool.webfn')
       routes.append(('/'+name, BackendHandler, dict(func=funcs[name])))
-    tornado.web.Application.__init__(self, routes, **kwargs)
+    tornado.web.Application.__init__(self, routes)
 
     # keep track of per-session state, maps from string uid -> dict
     self.sessions = {}
