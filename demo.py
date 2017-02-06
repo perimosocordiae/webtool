@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-import webtool
 from matplotlib import pyplot as plt
+from webtool import webtool, webfn, webarg
 
 
-@webtool.webfn('Demo Function', 'This is a demo of webtool.',
-               f=('File parameter', open, None),
-               i=('Int parameter', int, 42),
-               x=('Float parameter', float, 3.14159),
-               s=('String parameter', str, 'default'))
+@webfn('Demo Function', 'This is a demo of WebTool functionality.',
+       f=webarg('File parameter', type=open),
+       i=webarg('Int parameter', type=int, default=42),
+       x=webarg('Float parameter', type=float, default=3.14159),
+       s=webarg('String parameter', default='default'))
 def demo(state, **kwargs):
   count = state.get('count', 0)
   count += 1
@@ -24,4 +24,5 @@ def demo(state, **kwargs):
   plist = ['<li>%s = %r</li>' % kv for kv in kwargs.items()]
   return 'Called %d times.<br>Params:<ul>%s</ul>' % (count, '\n'.join(plist))
 
-webtool.webtool('Demo', 8787, demo=demo)
+if __name__ == '__main__':
+  webtool(title='Demo', port=8787, demo=demo)

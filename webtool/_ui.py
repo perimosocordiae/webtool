@@ -13,24 +13,7 @@ def ui_template():
     head = _tpl_head()
     tpl = '<html><head>%s</head><body>%s</body></html>' % (head, _TPL_BODY)
     _TPL = tornado.template.Template(tpl)
-    _TPL.namespace['arg_desc_to_input'] = arg_desc_to_input
   return _TPL
-
-
-def arg_desc_to_input(key, arg_desc):
-  '''Convert (desc, type, default) tuples into labeled <input> elements'''
-  desc, t, default = arg_desc
-  if issubclass(t, int):
-    attrs = 'type="number"'
-  elif issubclass(t, float):
-    attrs = 'type="number" step="any"'
-  elif t is open or isinstance(t, argparse.FileType):
-    attrs = 'type="file"'
-  else:
-    attrs = 'type="text"'
-  # NOTE: an f-string would be great here
-  tpl = '<label><input {attrs} name="{key}" value="{default}"> {desc}</label>'
-  return tpl.format(attrs=attrs, key=key, default=default, desc=desc)
 
 
 def _tpl_head():
@@ -69,7 +52,7 @@ _TPL_BODY = '''
     <legend>{{ftitle}}</legend>
     <p>{{fdesc}}</p>
     {% for key in arg_descs %}
-      <p>{{arg_desc_to_input(key, arg_descs[key])}}</p>
+      <p>{% raw arg_descs[key].to_html(key) %}</p>
     {% end %}
     <input type="hidden" name="session.uid" value="{{uid}}">
     <input type="submit" value="Run">
