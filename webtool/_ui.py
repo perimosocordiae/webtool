@@ -11,7 +11,8 @@ def ui_template():
   global _TPL
   if _TPL is None:
     head = _tpl_head()
-    tpl = '<html><head>%s</head><body>%s</body></html>' % (head, _TPL_BODY)
+    tpl = '<!DOCTYPE html><html><head>%s</head><body>%s</body></html>' % (
+        head, _TPL_BODY)
     _TPL = tornado.template.Template(tpl)
   return _TPL
 
@@ -33,6 +34,7 @@ def _tpl_head():
 
 
 _TPL_HEAD = '''
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{title}}</title>
 <script src="mpl.js"></script>
 <style>
