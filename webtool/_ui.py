@@ -1,4 +1,3 @@
-import argparse
 import matplotlib
 import os
 import tornado.template
