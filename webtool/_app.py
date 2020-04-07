@@ -81,11 +81,11 @@ class BackendHandler(tornado.web.RequestHandler):
     except IOError as e:
       logging.exception('User function failed.')
       self.set_status(400)
-      self.finish('Error: %s' % e.strerror)
+      self.finish('Error: %s' % e)
     except Exception as e:
       logging.exception('User function failed.')
       self.set_status(400)
-      self.finish('Error: %s' % e.message)
+      self.finish('Error: %s' % e)
     else:
       self.write(result)
       for fig in figures:
