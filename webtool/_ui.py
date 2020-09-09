@@ -1,3 +1,4 @@
+import glob
 import matplotlib
 import os
 import tornado.template
@@ -17,17 +18,26 @@ def ui_template():
 
 
 def _tpl_head():
-  mpl_js = sorted(os.listdir(os.path.join(matplotlib.__path__[0],
-                                          'backends/web_backend/jquery/js')))
-  mpl_css = ['css/page.css', 'css/fbm.css',
-             'jquery/css/themes/base/jquery-ui.min.css']
+  mpl_dir = os.path.join(matplotlib.__path__[0],
+                         'backends/web_backend')
+  mpl_js = (
+      glob.glob(os.path.join(mpl_dir, 'js/*.js')) +
+      glob.glob(os.path.join(mpl_dir, 'jquery-ui-*/*.min.js')) +
+      glob.glob(os.path.join(mpl_dir, 'jquery-ui-*/external/*/*.js'))
+  )
+  mpl_css = (
+      glob.glob(os.path.join(mpl_dir, 'css/*.css')) +
+      glob.glob(os.path.join(mpl_dir, 'jquery-ui-*/*.min.css'))
+  )
 
   resource_html = []
-  for path in mpl_css:
-    x = '<link rel="stylesheet" href="_static/%s" type="text/css">' % path
+  for abspath in mpl_css:
+    path = abspath.replace(mpl_dir, '_static')
+    x = '<link rel="stylesheet" href="%s" type="text/css">' % path
     resource_html.append(x)
-  for path in mpl_js:
-    x = '<script src="_static/jquery/js/%s"></script>' % path
+  for abspath in mpl_js[::-1]:
+    path = abspath.replace(mpl_dir, '_static')
+    x = '<script src="%s"></script>' % path
     resource_html.append(x)
   return '\n'.join(resource_html) + _TPL_HEAD
 
