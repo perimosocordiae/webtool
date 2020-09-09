@@ -32,6 +32,8 @@ def _tpl_head():
 
   resource_html = []
   for abspath in mpl_css:
+    if abspath.endswith('boilerplate.css'):
+      continue
     path = abspath.replace(mpl_dir, '_static')
     x = '<link rel="stylesheet" href="%s" type="text/css">' % path
     resource_html.append(x)
