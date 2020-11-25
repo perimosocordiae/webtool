@@ -20,15 +20,8 @@ def ui_template():
 def _tpl_head():
   mpl_dir = os.path.join(matplotlib.__path__[0],
                          'backends/web_backend')
-  mpl_js = (
-      glob.glob(os.path.join(mpl_dir, 'js/*.js')) +
-      glob.glob(os.path.join(mpl_dir, 'jquery-ui-*/*.min.js')) +
-      glob.glob(os.path.join(mpl_dir, 'jquery-ui-*/external/*/*.js'))
-  )
-  mpl_css = (
-      glob.glob(os.path.join(mpl_dir, 'css/*.css')) +
-      glob.glob(os.path.join(mpl_dir, 'jquery-ui-*/*.min.css'))
-  )
+  mpl_js = glob.glob(os.path.join(mpl_dir, 'js/mp*.js'))
+  mpl_css = glob.glob(os.path.join(mpl_dir, 'css/*.css'))
 
   resource_html = []
   for abspath in mpl_css:
@@ -53,6 +46,7 @@ fieldset { display:inline-block; }
 .figure { display:inline-block; }
 input[type="submit"] { width: 100%; }
 </style>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 '''
 
 _TPL_BODY = '''
@@ -92,7 +86,7 @@ function run(form) {
       $('.figure', res).each(function(){
         var fignum = $(this).attr('id').slice(3);
         var ws = new websocket_type('ws://{{host}}/{{uid}}/'+fignum+'/ws');
-        all_figures[fignum] = new mpl.figure(fignum, ws, savefig, $(this));
+        all_figures[fignum] = new mpl.figure(fignum, ws, savefig, this);
       });
     },
   });

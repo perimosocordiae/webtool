@@ -1,6 +1,7 @@
 import io
 import json
 import logging
+import os
 import tornado.ioloop
 import tornado.template
 import tornado.web
@@ -13,14 +14,18 @@ from ._ui import ui_template
 
 class WebToolApp(tornado.web.Application):
   def __init__(self, title, funcs):
+    mpl_static = FigureManagerWebAgg.get_static_file_path()
+    mpl_images = os.path.normpath(os.path.join(mpl_static,
+                                               '../../mpl-data/images'))
     routes = [
         (r'/', FrontendHandler, dict(title=title, funcs=funcs)),
-        # (r'/assets/(.*)', tornado.web.StaticFileHandler, dict(path=...)),
         (r'/([0-9]+)/download.([a-z0-9.]+)', DownloadHandler),
         (r'/([0-9a-f]+)/([0-9]+)/ws', WebSocketHandler),
         (r'/mpl.js', MplJsHandler),
         (r'/_static/(.*)', tornado.web.StaticFileHandler,
-         dict(path=FigureManagerWebAgg.get_static_file_path())),
+         dict(path=mpl_static)),
+        (r'/_images/(.*)', tornado.web.StaticFileHandler,
+         dict(path=mpl_images)),
     ]
     for name in funcs:
       f = funcs[name]
